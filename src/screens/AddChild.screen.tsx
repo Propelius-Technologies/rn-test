@@ -2,6 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import { Button, Input, makeStyles } from 'react-native-elements';
 import { useFormik } from 'formik';
+import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface AddChildScreenProps {}
 
@@ -12,6 +14,7 @@ interface AddChildForm {
 
 const AddChildScreen: React.FC<AddChildScreenProps> = () => {
   const styles = useStyles();
+  const navigation = useNavigation();
   const { values, errors, handleChange, handleBlur, touched } =
     useFormik<AddChildForm>({
       initialValues: {
@@ -22,7 +25,7 @@ const AddChildScreen: React.FC<AddChildScreenProps> = () => {
     });
 
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View>
         <Input
           label="Name"
@@ -39,8 +42,8 @@ const AddChildScreen: React.FC<AddChildScreenProps> = () => {
           errorMessage={errors.age && touched.age ? errors.age : null}
         />
       </View>
-      <Button title="Add Child" onPress={() => true} />
-    </View>
+      <Button title="Add Child" onPress={() => navigation.goBack()} />
+    </KeyboardAwareScrollView>
   );
 };
 

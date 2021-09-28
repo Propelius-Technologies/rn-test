@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { Button, makeStyles } from 'react-native-elements';
+import { Button, FAB, Icon, makeStyles } from 'react-native-elements';
 import { Child } from 'src/types/users.types';
+import { useNavigation } from '@react-navigation/native';
 
 const Home: React.FC = () => {
   const styles = useStyles();
+  const navigation = useNavigation();
   const children: Child[] = [
     {
       id: 1,
@@ -32,19 +34,31 @@ const Home: React.FC = () => {
     },
   ];
   return (
-    <ScrollView style={styles.container}>
-      {children.map(child => {
-        return (
-          <View style={styles.card} key={child.id}>
-            <View style={styles.row}>
-              <Text style={styles.childName}>{child.name}</Text>
-              <Text>{child.age}</Text>
+    <View style={styles.container}>
+      <FAB
+        title="Add Child"
+        color="#20C997"
+        icon={<Icon name="add" color="white" />}
+        style={styles.fab}
+        onPress={() => navigation.navigate('AddChild')}
+      />
+      <ScrollView>
+        {children.map(child => {
+          return (
+            <View style={styles.card} key={child.id}>
+              <View style={styles.row}>
+                <Text style={styles.childName}>{child.name}</Text>
+                <Text>{child.age}</Text>
+              </View>
+              <Button
+                title="Show Cards"
+                onPress={() => navigation.navigate('Cards')}
+              />
             </View>
-            <Button title="Show Cards" />
-          </View>
-        );
-      })}
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -52,6 +66,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     flex: 1,
     padding: theme.spacing.m,
+    position: 'relative',
   },
   text: {
     color: theme.colors?.primary,
@@ -71,6 +86,12 @@ const useStyles = makeStyles(theme => ({
   childName: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 50,
+    right: 20,
+    zIndex: 99,
   },
 }));
 

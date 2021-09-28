@@ -2,6 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import { Button, Input, makeStyles } from 'react-native-elements';
 import { useFormik } from 'formik';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface RegisterScreenProps {}
 
@@ -12,7 +14,7 @@ interface RegisterForm {
 
 const RegisterScreen: React.FC<RegisterScreenProps> = () => {
   const styles = useStyles();
-
+  const navigation = useNavigation();
   const { values, errors, handleChange, handleBlur, touched } =
     useFormik<RegisterForm>({
       initialValues: {
@@ -23,7 +25,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
     });
 
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View>
         <Input
           label="Name"
@@ -41,8 +43,18 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
           autoCompleteType="email"
         />
       </View>
-      <Button title="Register" onPress={() => true} />
-    </View>
+      <Button
+        title="Register"
+        onPress={() =>
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            }),
+          )
+        }
+      />
+    </KeyboardAwareScrollView>
   );
 };
 

@@ -11,11 +11,11 @@ const Stack = createStackNavigator();
 const HomeStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="AddCard" component={AddCardScreen} />
-      <Stack.Screen name="Cards" component={CardsScreen} />
-      <Stack.Screen name="AddChild" component={AddChildScreen} />
-      <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="AddChild" component={AddChildScreen} />
+      <Stack.Screen name="Cards" component={CardsScreen} />
+      <Stack.Screen name="AddCard" component={AddCardScreen} />
     </Stack.Navigator>
   );
 };

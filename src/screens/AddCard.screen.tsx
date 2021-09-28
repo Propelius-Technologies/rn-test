@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { Button, Input, makeStyles } from 'react-native-elements';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useNavigation } from '@react-navigation/native';
 
 interface AddCardScreenProps {}
 
@@ -16,7 +17,7 @@ interface AddCardForm {
 
 const AddCardScreen: React.FC<AddCardScreenProps> = () => {
   const styles = useStyles();
-
+  const navigation = useNavigation();
   const { values, errors, handleChange, handleBlur, touched } =
     useFormik<AddCardForm>({
       initialValues: {
@@ -80,7 +81,7 @@ const AddCardScreen: React.FC<AddCardScreenProps> = () => {
           value={values.monthlyLimit?.toString()}
         />
       </View>
-      <Button title="Add Card" onPress={() => true} />
+      <Button title="Add Card" onPress={() => navigation.goBack()} />
     </KeyboardAwareScrollView>
   );
 };

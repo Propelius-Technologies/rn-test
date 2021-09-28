@@ -1,12 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { FAB, Icon, makeStyles, Text } from 'react-native-elements';
 import { Card } from 'src/types/users.types';
+import { useNavigation } from '@react-navigation/native';
 
 interface CardsScreenProps {}
 
 const CardsScreen: React.FC<CardsScreenProps> = () => {
   const styles = useStyles();
+  const navigation = useNavigation();
   const cards: Card[] = [
     {
       id: 1,
@@ -29,20 +31,23 @@ const CardsScreen: React.FC<CardsScreenProps> = () => {
     <View style={styles.container}>
       <FAB
         title="Add Card"
-        icon={<Icon name="add" />}
+        color="#20C997"
+        icon={<Icon name="add" color="white" />}
         style={styles.fab}
-        onPress={() => true}
+        onPress={() => navigation.navigate('AddCard')}
       />
-      {cards.map(card => (
-        <View style={styles.card} key={card.id}>
-          <View>
-            <Text style={styles.cardNumber}>{card.number}</Text>
-            <Text style={styles.cardExpiry}>
-              {card.expirationDate.toDateString()}
-            </Text>
+      <ScrollView>
+        {cards.map(card => (
+          <View style={styles.card} key={card.id}>
+            <View>
+              <Text style={styles.cardNumber}>{card.number}</Text>
+              <Text style={styles.cardExpiry}>
+                {card.expirationDate.toDateString()}
+              </Text>
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
+      </ScrollView>
     </View>
   );
 };

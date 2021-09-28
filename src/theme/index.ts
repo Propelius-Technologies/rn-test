@@ -41,7 +41,7 @@ export const theme: Partial<FullTheme> = {
   },
   Text: {
     style: {
-      fontFamily: 'Inter-Regular',
+      // fontFamily: 'Inter-Regular',
       color: '#333',
     },
   },

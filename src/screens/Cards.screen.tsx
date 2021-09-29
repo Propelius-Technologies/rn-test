@@ -26,7 +26,9 @@ const CardsScreen = ({ route }) => {
           <View style={styles.card} key={card.id}>
             <View style={styles.cardRow}>
               <Text style={styles.cardNumber}>{card.number}</Text>
-              <Text style={styles.cardExpiry}>{card.expirationDate}</Text>
+              <Text style={styles.cardExpiry}>
+                {card.expirationDate.toDateString()}
+              </Text>
             </View>
             <View style={[styles.cardRow]}>
               <Text>Card Type: {card.type}</Text>
@@ -41,13 +43,10 @@ const CardsScreen = ({ route }) => {
                 }}
                 buttonStyle={{ backgroundColor: 'skyblue' }}
                 onPress={async () => {
-                  // const updatedUser = {
-                  //   ...currentUser,
-                  //   children: omit(currentUser.children, [child.id]),
-                  // };
-                  //
-                  // dispatch(setUser(updatedUser));
-                  // await setStoreValue(currentUser.email, updatedUser);
+                  navigation.navigate('MakeAPurchase', {
+                    childId: id,
+                    cardId: card.id,
+                  });
                 }}
               />
               <Button

@@ -12,12 +12,13 @@ import { setStoreValue } from 'src/utils/asyncStorage';
 import { useSelector } from 'react-redux';
 import { selectUser } from 'src/redux/users/users.selectors';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
+import CustomDatePicker from 'src/components/CustomDatePicker';
 
 interface AddCardForm {
   type: string;
   number: string;
   securityCode: string;
-  expirationDate: string;
+  expirationDate: Date;
   monthlyLimit: string;
 }
 
@@ -36,34 +37,44 @@ const AddCardScreen = ({ route }) => {
 
   const dispatch = useAppDispatch();
   const currentUser = useSelector(selectUser);
-  const { values, errors, handleChange, handleBlur, touched, handleSubmit } =
-    useFormik<AddCardForm>({
-      validationSchema: AddCardSchema,
-      initialValues: {
-        type: '',
-        monthlyLimit: '',
-        expirationDate: '',
-        number: '',
-        securityCode: '',
-      },
-      onSubmit: async data => {
-        const cardId = uuid.v4() as string;
-        const children = currentUser.children[id];
-        const card: Card = { ...data, id: cardId };
-        const updatedChildren = {
-          ...currentUser.children,
-          [id]: { ...children, cards: { ...children.cards, [cardId]: card } },
-        };
-        const updatedUser = {
-          ...currentUser,
-          children: updatedChildren,
-        };
+  const {
+    values,
+    errors,
+    handleChange,
+    handleBlur,
+    touched,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik<AddCardForm>({
+    validationSchema: AddCardSchema,
+    initialValues: {
+      type: '',
+      monthlyLimit: '',
+      expirationDate: new Date(),
+      number: '',
+      securityCode: '',
+    },
+    onSubmit: async data => {
+      const cardId = uuid.v4() as string;
+      const children = currentUser.children[id];
+      const card: Card = {
+        ...data,
+        id: cardId,
+      };
+      const updatedChildren = {
+        ...currentUser.children,
+        [id]: { ...children, cards: { ...children.cards, [cardId]: card } },
+      };
+      const updatedUser = {
+        ...currentUser,
+        children: updatedChildren,
+      };
 
-        dispatch(setUser(updatedUser));
-        await setStoreValue(currentUser.email, updatedUser);
-        navigation.goBack();
-      },
-    });
+      dispatch(setUser(updatedUser));
+      await setStoreValue(currentUser.email, updatedUser);
+      navigation.goBack();
+    },
+  });
 
   return (
     <KeyboardAwareScrollView style={styles.container}>
@@ -96,17 +107,21 @@ const AddCardScreen = ({ route }) => {
           keyboardType="number-pad"
           secureTextEntry
         />
-        <Input
-          label="Expiration Date"
-          errorMessage={
-            errors.expirationDate && touched.expirationDate
-              ? errors.expirationDate
-              : null
-          }
-          onChangeText={handleChange('expirationDate')}
-          onBlur={handleBlur('expirationDate')}
+        <CustomDatePicker
           value={values.expirationDate}
+          // containerStyle={styles.field}
+          handleChange={date => {
+            setFieldValue('expirationDate', date);
+          }}
+          error={!!errors.expirationDate}
+          errorMessage={
+            errors.expirationDate
+              ? errors.expirationDate
+              : 'Expiration date is required'
+          }
+          touched={!!touched.expirationDate}
         />
+
         <Input
           label="Monthly Limit"
           errorMessage={

@@ -22,6 +22,6 @@ export type Card = {
   type: string;
   number: string;
   securityCode: string;
-  expirationDate: string;
+  expirationDate: Date;
   monthlyLimit: string;
 };

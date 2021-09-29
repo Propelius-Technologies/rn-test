@@ -4,30 +4,65 @@ import { Button, Input, makeStyles } from 'react-native-elements';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
-
-interface AddCardScreenProps {}
+import * as Yup from 'yup';
+import { Card } from 'src/types/users.types';
+import uuid from 'react-native-uuid';
+import { setUser } from 'src/redux/users/users.slice';
+import { setStoreValue } from 'src/utils/asyncStorage';
+import { useSelector } from 'react-redux';
+import { selectUser } from 'src/redux/users/users.selectors';
+import { useAppDispatch } from 'src/hooks/useAppDispatch';
 
 interface AddCardForm {
   type: string;
-  number: number;
-  securityCode: number;
+  number: string;
+  securityCode: string;
   expirationDate: string;
-  monthlyLimit: number;
+  monthlyLimit: string;
 }
 
-const AddCardScreen: React.FC<AddCardScreenProps> = () => {
+const AddCardSchema = Yup.object().shape({
+  type: Yup.string().required('Type is required'),
+  number: Yup.string().required('Card number is required'),
+  securityCode: Yup.string().required('Security code is required'),
+  expirationDate: Yup.string().required('Expiration date is required'),
+  monthlyLimit: Yup.string().required('Monthly Limit is required'),
+});
+
+const AddCardScreen = ({ route }) => {
   const styles = useStyles();
+  const { id } = route.params;
   const navigation = useNavigation();
-  const { values, errors, handleChange, handleBlur, touched } =
+
+  const dispatch = useAppDispatch();
+  const currentUser = useSelector(selectUser);
+  const { values, errors, handleChange, handleBlur, touched, handleSubmit } =
     useFormik<AddCardForm>({
+      validationSchema: AddCardSchema,
       initialValues: {
         type: '',
-        monthlyLimit: null,
+        monthlyLimit: '',
         expirationDate: '',
-        number: null,
-        securityCode: null,
+        number: '',
+        securityCode: '',
       },
-      onSubmit: () => {},
+      onSubmit: async data => {
+        const cardId = uuid.v4() as string;
+        const children = currentUser.children[id];
+        const card: Card = { ...data, id: cardId };
+        const updatedChildren = {
+          ...currentUser.children,
+          [id]: { ...children, cards: { ...children.cards, [cardId]: card } },
+        };
+        const updatedUser = {
+          ...currentUser,
+          children: updatedChildren,
+        };
+
+        dispatch(setUser(updatedUser));
+        await setStoreValue(currentUser.email, updatedUser);
+        navigation.goBack();
+      },
     });
 
   return (
@@ -46,6 +81,7 @@ const AddCardScreen: React.FC<AddCardScreenProps> = () => {
           onChangeText={handleChange('number')}
           onBlur={handleBlur('number')}
           value={values.number?.toString()}
+          keyboardType="number-pad"
         />
         <Input
           label="Security Code"
@@ -57,6 +93,8 @@ const AddCardScreen: React.FC<AddCardScreenProps> = () => {
           onChangeText={handleChange('securityCode')}
           onBlur={handleBlur('securityCode')}
           value={values.securityCode?.toString()}
+          keyboardType="number-pad"
+          secureTextEntry
         />
         <Input
           label="Expiration Date"
@@ -79,9 +117,10 @@ const AddCardScreen: React.FC<AddCardScreenProps> = () => {
           onChangeText={handleChange('monthlyLimit')}
           onBlur={handleBlur('monthlyLimit')}
           value={values.monthlyLimit?.toString()}
+          keyboardType="number-pad"
         />
       </View>
-      <Button title="Add Card" onPress={() => navigation.goBack()} />
+      <Button title="Add Card" onPress={handleSubmit} />
     </KeyboardAwareScrollView>
   );
 };

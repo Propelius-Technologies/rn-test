@@ -4,6 +4,14 @@ import { Button, Input, makeStyles } from 'react-native-elements';
 import { useFormik } from 'formik';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { setStoreValue } from 'src/utils/asyncStorage';
+import { useSelector } from 'react-redux';
+import { selectUser } from 'src/redux/users/users.selectors';
+import uuid from 'react-native-uuid';
+import { useAppDispatch } from 'src/hooks/useAppDispatch';
+import { setUser } from 'src/redux/users/users.slice';
+import { Child } from 'src/types/users.types';
+import * as Yup from 'yup';
 
 interface AddChildScreenProps {}
 
@@ -12,16 +20,35 @@ interface AddChildForm {
   age: string;
 }
 
+const AddChildSchema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  age: Yup.string().required('Age is required'),
+});
+
 const AddChildScreen: React.FC<AddChildScreenProps> = () => {
   const styles = useStyles();
   const navigation = useNavigation();
-  const { values, errors, handleChange, handleBlur, touched } =
+  const dispatch = useAppDispatch();
+  const currentUser = useSelector(selectUser);
+  const { values, errors, handleChange, handleBlur, touched, handleSubmit } =
     useFormik<AddChildForm>({
+      validationSchema: AddChildSchema,
       initialValues: {
         name: '',
         age: '',
       },
-      onSubmit: () => {},
+      onSubmit: async data => {
+        const id = uuid.v4() as string;
+        const child: Child = { ...data, id, cards: {} };
+        const updatedUser = {
+          ...currentUser,
+          children: { ...currentUser.children, [id]: child },
+        };
+
+        dispatch(setUser(updatedUser));
+        await setStoreValue(currentUser.email, updatedUser);
+        navigation.goBack();
+      },
     });
 
   return (
@@ -40,9 +67,10 @@ const AddChildScreen: React.FC<AddChildScreenProps> = () => {
           onChangeText={handleChange('age')}
           onBlur={handleBlur('age')}
           errorMessage={errors.age && touched.age ? errors.age : null}
+          keyboardType="number-pad"
         />
       </View>
-      <Button title="Add Child" onPress={() => navigation.goBack()} />
+      <Button title="Add Child" onPress={handleSubmit} />
     </KeyboardAwareScrollView>
   );
 };

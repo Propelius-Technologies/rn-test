@@ -7,3 +7,8 @@ export const selectUser = createSelector(
   [selectUsersState],
   users => users.user,
 );
+
+export const selectChildren = createSelector(
+  [selectUser],
+  user => user.children,
+);

@@ -7,21 +7,21 @@ export type User = {
   name: string;
   email: string;
   password: string;
-  children: Child[];
+  children: Record<string, Child>;
 };
 
 export type Child = {
-  id: number;
+  id: string;
   name: string;
-  age: number;
-  cards: Card[];
+  age: string;
+  cards: Record<string, Card>;
 };
 
 export type Card = {
-  id: number;
+  id: string;
   type: string;
   number: number;
   securityCode: number;
-  expirationDate: Date;
+  expirationDate: string;
   monthlyLimit: number;
 };

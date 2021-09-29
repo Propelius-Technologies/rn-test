@@ -5,12 +5,14 @@ import CardsScreen from 'src/screens/Cards.screen';
 import AddCardScreen from 'src/screens/AddCard.screen';
 import AddChildScreen from 'src/screens/AddChild.screen';
 import RegisterScreen from 'src/screens/Register.screen';
+import LoginScreen from 'src/screens/Login.screen';
 
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
   return (
     <Stack.Navigator>
+      <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="AddChild" component={AddChildScreen} />

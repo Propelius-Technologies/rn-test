@@ -1,38 +1,20 @@
 import * as React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { Button, FAB, Icon, makeStyles } from 'react-native-elements';
-import { Child } from 'src/types/users.types';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { selectChildren, selectUser } from 'src/redux/users/users.selectors';
+import { setUser } from 'src/redux/users/users.slice';
+import { setStoreValue } from 'src/utils/asyncStorage';
+import { useAppDispatch } from 'src/hooks/useAppDispatch';
+import omit from 'lodash/omit';
 
 const Home: React.FC = () => {
   const styles = useStyles();
   const navigation = useNavigation();
-  const children: Child[] = [
-    {
-      id: 1,
-      name: 'Arman',
-      age: 20,
-      cards: [],
-    },
-    {
-      id: 2,
-      name: 'Arman',
-      age: 20,
-      cards: [],
-    },
-    {
-      id: 3,
-      name: 'Arman',
-      age: 20,
-      cards: [],
-    },
-    {
-      id: 4,
-      name: 'Arman',
-      age: 20,
-      cards: [],
-    },
-  ];
+  const dispatch = useAppDispatch();
+  const currentUser = useSelector(selectUser);
+  const children = useSelector(selectChildren);
   return (
     <View style={styles.container}>
       <FAB
@@ -43,17 +25,37 @@ const Home: React.FC = () => {
         onPress={() => navigation.navigate('AddChild')}
       />
       <ScrollView>
-        {children.map(child => {
+        {Object.values(children).map(child => {
           return (
             <View style={styles.card} key={child.id}>
               <View style={styles.row}>
                 <Text style={styles.childName}>{child.name}</Text>
                 <Text>{child.age}</Text>
               </View>
-              <Button
-                title="Show Cards"
-                onPress={() => navigation.navigate('Cards')}
-              />
+              <View style={styles.buttons}>
+                <Button
+                  title="Delete"
+                  containerStyle={{
+                    flex: 1,
+                    marginRight: 4,
+                  }}
+                  buttonStyle={{ backgroundColor: 'red' }}
+                  onPress={async () => {
+                    const updatedUser = {
+                      ...currentUser,
+                      children: omit(currentUser.children, [child.id]),
+                    };
+
+                    dispatch(setUser(updatedUser));
+                    await setStoreValue(currentUser.email, updatedUser);
+                  }}
+                />
+                <Button
+                  title="Show Cards"
+                  onPress={() => navigation.navigate('Cards', { id: child.id })}
+                  containerStyle={{ flex: 1, marginLeft: 4 }}
+                />
+              </View>
             </View>
           );
         })}
@@ -92,6 +94,11 @@ const useStyles = makeStyles(theme => ({
     bottom: 50,
     right: 20,
     zIndex: 99,
+  },
+  buttons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: theme.spacing.s,
   },
 }));
 

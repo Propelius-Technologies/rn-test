@@ -1,3 +1,19 @@
-# React Native Boilerplate
+# React Native Test
 
-### React Native + Typescript + Eslint + Prettier + Husky + React Native Elements + React navigation 5 + React native vector icons
+
+
+#### Requirements
+
+- Xcode 12.5 or higher & iPhone simulator
+- Node Js 14+
+- NPM or Yarn 
+
+
+#### To Run this project
+
+- Clone this repo
+- cd into the repo
+- run `yarn install` or `npm install`
+- run `yarn pods` (to install pods)
+- run `yarn start`
+- run `yarn ios`

@@ -6,6 +6,7 @@ import AddCardScreen from 'src/screens/AddCard.screen';
 import AddChildScreen from 'src/screens/AddChild.screen';
 import RegisterScreen from 'src/screens/Register.screen';
 import LoginScreen from 'src/screens/Login.screen';
+import UpdateCardScreen from 'src/screens/UpdateCard.screen';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ const HomeStack = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="AddChild" component={AddChildScreen} />
       <Stack.Screen name="Cards" component={CardsScreen} />
+      <Stack.Screen name="UpdateCard" component={UpdateCardScreen} />
       <Stack.Screen name="AddCard" component={AddCardScreen} />
     </Stack.Navigator>
   );

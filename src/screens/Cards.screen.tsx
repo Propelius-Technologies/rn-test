@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import { FAB, Icon, makeStyles, Text } from 'react-native-elements';
+import { Button, FAB, Icon, makeStyles, Text } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { selectChildren } from 'src/redux/users/users.selectors';
@@ -24,9 +24,42 @@ const CardsScreen = ({ route }) => {
       <ScrollView>
         {Object.values(cards).map(card => (
           <View style={styles.card} key={card.id}>
-            <View>
+            <View style={styles.cardRow}>
               <Text style={styles.cardNumber}>{card.number}</Text>
               <Text style={styles.cardExpiry}>{card.expirationDate}</Text>
+            </View>
+            <View style={[styles.cardRow]}>
+              <Text>Card Type: {card.type}</Text>
+              <Text>Monthly Limit: ${card.monthlyLimit}</Text>
+            </View>
+            <View style={[styles.cardRow, { marginTop: 10 }]}>
+              <Button
+                title="Make a Purchase"
+                containerStyle={{
+                  flex: 1,
+                  marginRight: 4,
+                }}
+                buttonStyle={{ backgroundColor: 'skyblue' }}
+                onPress={async () => {
+                  // const updatedUser = {
+                  //   ...currentUser,
+                  //   children: omit(currentUser.children, [child.id]),
+                  // };
+                  //
+                  // dispatch(setUser(updatedUser));
+                  // await setStoreValue(currentUser.email, updatedUser);
+                }}
+              />
+              <Button
+                title="Update Limit"
+                onPress={() =>
+                  navigation.navigate('UpdateCard', {
+                    childId: id,
+                    cardId: card.id,
+                  })
+                }
+                containerStyle={{ flex: 1, marginLeft: 4 }}
+              />
             </View>
           </View>
         ))}
@@ -48,8 +81,17 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing.m,
     marginVertical: theme.spacing.s,
   },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
   cardExpiry: {},
-  cardNumber: {},
+  cardNumber: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 }));
 
 export default CardsScreen;

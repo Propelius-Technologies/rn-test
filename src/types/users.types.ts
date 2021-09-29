@@ -20,8 +20,8 @@ export type Child = {
 export type Card = {
   id: string;
   type: string;
-  number: number;
-  securityCode: number;
+  number: string;
+  securityCode: string;
   expirationDate: string;
-  monthlyLimit: number;
+  monthlyLimit: string;
 };

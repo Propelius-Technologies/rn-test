@@ -30,7 +30,7 @@ const Home: React.FC = () => {
             <View style={styles.card} key={child.id}>
               <View style={styles.row}>
                 <Text style={styles.childName}>{child.name}</Text>
-                <Text>{child.age}</Text>
+                <Text>Age: {child.age}</Text>
               </View>
               <View style={styles.buttons}>
                 <Button
@@ -83,7 +83,8 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.s,
+    marginBottom: theme.spacing.m,
+    paddingHorizontal: theme.spacing.s,
   },
   childName: {
     fontSize: 16,

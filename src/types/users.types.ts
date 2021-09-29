@@ -1,11 +1,12 @@
 export interface UsersState {
-  users: User[];
+  user: User;
 }
 
 export type User = {
-  id: number;
+  id: string;
   name: string;
   email: string;
+  password: string;
   children: Child[];
 };
 

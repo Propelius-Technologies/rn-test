@@ -3,7 +3,7 @@ import { RootReduxState } from 'src/types/redux.types';
 
 const selectUsersState = (state: RootReduxState) => state.users;
 
-export const selectUsers = createSelector(
+export const selectUser = createSelector(
   [selectUsersState],
-  users => users.users,
+  users => users.user,
 );

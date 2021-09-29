@@ -2,28 +2,28 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User, UsersState } from 'src/types/users.types';
 
 const initialState: UsersState = {
-  users: [],
+  user: null,
 };
 
 const users = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    registerUser: (state: UsersState, { payload }: PayloadAction<User>) => {
-      state.users = [...state.users, payload];
+    setUser: (state: UsersState, { payload }: PayloadAction<User>) => {
+      state.user = payload;
     },
     createChild: (state: UsersState, {}: PayloadAction<any>) => {
-      state.users;
+      state.user;
     },
     deleteChild: (state: UsersState, {}: PayloadAction<any>) => {
-      state.users;
+      state.user;
     },
     createCard: (state: UsersState, {}: PayloadAction<any>) => {
-      state.users;
+      state.user;
     },
   },
 });
 
-export const { registerUser } = users.actions;
+export const { setUser } = users.actions;
 
 export default users.reducer;

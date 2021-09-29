@@ -5,65 +5,61 @@ import { useFormik } from 'formik';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
-import { setStoreValue } from 'src/utils/asyncStorage';
-import uuid from 'react-native-uuid';
-import { setUser } from 'src/redux/users/users.slice';
-import { User } from 'src/types/users.types';
+import { getStoreValue } from 'src/utils/asyncStorage';
+import { notifyMessage } from 'src/utils/notifyMessage';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
+import { setUser } from 'src/redux/users/users.slice';
 
-interface RegisterScreenProps {}
+interface LoginScreenProps {}
 
-interface RegisterForm {
-  name: string;
-  email: string;
+interface LoginForm {
   password: string;
+  email: string;
 }
 
-const RegisterSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
+const LoginSchema = Yup.object().shape({
   email: Yup.string().email().required('Email is required'),
   password: Yup.string().min(4).required('Password is required'),
 });
 
-const RegisterScreen: React.FC<RegisterScreenProps> = () => {
+const LoginScreen: React.FC<LoginScreenProps> = () => {
   const styles = useStyles();
   const navigation = useNavigation();
+
   const dispatch = useAppDispatch();
   const { values, errors, handleChange, handleBlur, touched, handleSubmit } =
-    useFormik<RegisterForm>({
-      validationSchema: RegisterSchema,
+    useFormik<LoginForm>({
+      validationSchema: LoginSchema,
       initialValues: {
-        name: '',
-        email: '',
         password: '',
+        email: '',
       },
       onSubmit: async data => {
-        try {
-          const user: User = { ...data, id: uuid.v4() as string, children: [] };
-          await setStoreValue(data.email, user);
-          dispatch(setUser(user));
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'Home' }],
-            }),
-          );
-        } catch (e) {
-          console.log(e);
+        const user = await getStoreValue(data.email);
+
+        if (!user) {
+          notifyMessage('User does not exists');
+          return;
         }
+
+        if (user.password !== data.password) {
+          notifyMessage('Invalid credentials');
+          return;
+        }
+
+        dispatch(setUser(user));
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          }),
+        );
       },
     });
 
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <View>
-        <Input
-          label="Name"
-          value={values.name}
-          onChangeText={handleChange('name')}
-          onBlur={handleBlur('name')}
-          errorMessage={errors.name && touched.name ? errors.name : null}
-        />
         <Input
           label="Email"
           value={values.email}
@@ -84,7 +80,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
           secureTextEntry
         />
       </View>
-      <Button title="Register" onPress={handleSubmit} />
+      <Button title="Login" onPress={handleSubmit} />
+      <Button
+        title="Don't have an account? Register"
+        type="clear"
+        onPress={() => {
+          navigation.navigate('Register');
+        }}
+      />
     </KeyboardAwareScrollView>
   );
 };
@@ -96,4 +99,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default RegisterScreen;
+export default LoginScreen;
